@@ -6,21 +6,22 @@
 #         self.right = right
 class Solution:
     def minDepth(self, root: Optional[TreeNode]) -> int:
+        from collections import deque
+
+class Solution:
+    def minDepth(self, root: Optional[TreeNode]) -> int:
         if not root:
             return 0
         
-        self.min_depth = float('inf')
-        self.dfs(root, 1)
-        return self.min_depth
-
-    def dfs(self, node, curr_depth):
-        if not node:
-            return
+        q = deque([(root, 1)])
         
-        # Leaf node
-        if not node.left and not node.right:
-            self.min_depth = min(self.min_depth, curr_depth)
-            return
-        
-        self.dfs(node.left, curr_depth + 1)
-        self.dfs(node.right, curr_depth + 1)
+        while q:
+            node, depth = q.popleft()
+            
+            if not node.left and not node.right:
+                return depth
+            
+            if node.left:
+                q.append((node.left, depth + 1))
+            if node.right:
+                q.append((node.right, depth + 1))
