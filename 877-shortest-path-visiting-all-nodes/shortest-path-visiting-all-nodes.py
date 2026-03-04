@@ -1,22 +1,27 @@
 class Solution:
     def shortestPathLength(self, graph: List[List[int]]) -> int:
-        n =  len(graph)
-        final_mask = (1 << n) - 1
-        heap = []
-        dist = {}
+        if not graph:
+            return 0
+        n = len(graph)
+        target = (1 << n) - 1
+        queue = deque()
+        visited = [[False] * (1<<n) for _ in range(n)]
         for i in range(n):
-            mask = 1 << i
-            heapq.heappush(heap, (0,i,mask))
-            dist[(i, mask)] = 0
-        while heap:
-            d, node, mask = heapq.heappop(heap)
-            if mask == final_mask:
-                return d
-            if dist[(node, mask)] < d:
-                continue
-            for nei in graph[node]:
-                new_mask = mask | (1 << nei)
-                new_dist = d + 1
-                if (nei, new_mask) not in dist or dist[(nei, new_mask)] > new_dist:
-                    dist[(nei, new_mask)] = new_dist
-                    heapq.heappush(heap, (new_dist, nei, new_mask))
+            mask  = 1 << i
+            queue.append((i, mask))
+            visited[i][mask] = True
+        steps = 0
+        while queue:
+            size = len(queue)
+            for _ in range(size):
+                node, mask = queue.popleft()
+                if mask == target:
+                    return steps
+                for neigh in graph[node]:
+                    new_mask = mask | (1 << neigh)
+                     
+                    if not visited[neigh][new_mask]:
+                        visited[neigh][new_mask] = True
+                        queue.append((neigh, new_mask))
+            steps += 1
+        return -1
